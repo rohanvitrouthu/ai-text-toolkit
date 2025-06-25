@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Text Toolkit (OpenAI)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Simple spinner animation */
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border-left-color: #10a37f; /* OpenAI's green */
+            animation: spin 1s ease infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+    <div class="container mx-auto max-w-4xl p-4 sm:p-6 md:p-8">
+        
+        <!-- Header -->
+        <header class="text-center mb-8">
+            <h1 class="text-4xl sm:text-5xl font-bold text-gray-900">AI Text Toolkit</h1>
+            <p class="mt-2 text-lg text-gray-600">Your one-stop tool for text transformation, powered by OpenAI.</p>
+        </header>
+
+        <main class="bg-white p-6 sm:p-8 rounded-2xl shadow-lg">
+            
+            <!-- Input Section -->
+            <div>
+                <label for="inputText" class="block text-lg font-semibold mb-2 text-gray-700">Enter your text here:</label>
+                <textarea id="inputText" rows="10" class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200" placeholder="Paste or type your article, email, or any text..."></textarea>
+            </div>
+
+            <!-- Transformation Buttons -->
+            <div class="mt-6">
+                <h3 class="text-lg font-semibold mb-3 text-gray-700">Choose a transformation:</h3>
+                <div id="transformation-buttons" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
+                    <button data-transform="summarize" class="transform-btn bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition duration-200 shadow-md hover:shadow-lg">Summarize</button>
+                    <button data-transform="keywords" class="transform-btn bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg transition duration-200 shadow-md hover:shadow-lg">Keywords</button>
+                    <button data-transform="formal" class="transform-btn bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg transition duration-200 shadow-md hover:shadow-lg">Make Formal</button>
+                    <button data-transform="casual" class="transform-btn bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-lg transition duration-200 shadow-md hover:shadow-lg">Make Casual</button>
+                    <button data-transform="sheldon" class="transform-btn bg-orange-600 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded-lg transition duration-200 shadow-md hover:shadow-lg">Sheldon Mode</button>
+                </div>
+            </div>
+
+            <!-- Output Section -->
+            <div id="outputSection" class="mt-8 hidden">
+                <div class="flex justify-between items-center mb-3">
+                     <h3 class="text-lg font-semibold text-gray-700">Result:</h3>
+                     <button id="copyButton" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 px-4 rounded-lg text-sm transition duration-200">Copy to Clipboard</button>
+                </div>
+                <div id="output" class="w-full p-4 border border-gray-200 bg-gray-50 rounded-lg min-h-[150px] whitespace-pre-wrap"></div>
+                <div id="copy-feedback" class="text-green-600 text-sm mt-2 text-right hidden">Copied!</div>
+            </div>
+
+            <!-- Loading/Error Section -->
+            <div id="loading" class="mt-8 text-center hidden">
+                <div class="spinner mx-auto"></div>
+                <p class="mt-4 text-gray-600">The AI is thinking...</p>
+            </div>
+            <div id="error" class="mt-8 text-center p-4 bg-red-100 text-red-700 border border-red-300 rounded-lg hidden"></div>
+        </main>
+        
+        <footer class="text-center mt-8 text-gray-500">
+            <p>&copy; 2025 AI Text Toolkit. Built with OpenAI.</p>
+        </footer>
+
+    </div>
+
+    <script>
+        // --- DOM Element References ---
+        const inputText = document.getElementById('inputText');
+        const transformButtonsContainer = document.getElementById('transformation-buttons');
+        const outputSection = document.getElementById('outputSection');
+        const outputDiv = document.getElementById('output');
+        const loadingDiv = document.getElementById('loading');
+        const errorDiv = document.getElementById('error');
+        const copyButton = document.getElementById('copyButton');
+        const copyFeedback = document.getElementById('copy-feedback');
+
+        // --- Event Listener for all transform buttons ---
+        transformButtonsContainer.addEventListener('click', (event) => {
+            if (event.target.classList.contains('transform-btn')) {
+                const transformationType = event.target.dataset.transform;
+                handleTransformation(transformationType);
+            }
+        });
+
+        // --- Event Listener for Copy Button ---
+        copyButton.addEventListener('click', () => {
+            const textToCopy = outputDiv.innerText;
+            const textArea = document.createElement('textarea');
+            textArea.value = textToCopy;
+            document.body.appendChild(textArea);
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                copyFeedback.classList.remove('hidden');
+                setTimeout(() => copyFeedback.classList.add('hidden'), 2000);
+            } catch (err) {
+                console.error('Failed to copy text: ', err);
+                alert('Oops, unable to copy');
+            }
+            document.body.removeChild(textArea);
+        });
+
+        /**
+         * Main function to handle the transformation logic.
+         * @param {string} transformationType - The key for the transformation (e.g., "summarize").
+         */
+        async function handleTransformation(transformationType) {
+            const originalText = inputText.value.trim();
+
+            if (!originalText) {
+                showError("Please enter some text to transform.");
+                return;
+            }
+
+            hideAllSections();
+            loadingDiv.classList.remove('hidden');
+
+            try {
+                const transformedText = await callBackendAPI(transformationType, originalText);
+                showResult(transformedText);
+            } catch (error) {
+                console.error("API Call Failed:", error);
+                showError(`There was an issue with the server. Please try again. Details: ${error.message}`);
+            }
+        }
+
+        /**
+         * Calls our Python backend to perform the text transformation.
+         * @param {string} transformationType - The transformation to perform.
+         * @param {string} text - The user's input text.
+         * @returns {Promise<string>} - The transformed text from the backend.
+         */
+        async function callBackendAPI(transformationType, text) {
+            // The URL of our local Flask server
+            const apiUrl = 'http://127.0.0.1:5000/api/transform';
+            
+            const payload = {
+                transformationType: transformationType,
+                text: text
+            };
+            
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(payload),
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                // Use the error message from the backend, or a default one
+                const errorMessage = result.error || `Request failed with status ${response.status}`;
+                throw new Error(errorMessage);
+            }
+            
+            return result.transformed_text;
+        }
+
+        // --- UI Helper Functions ---
+        function hideAllSections() {
+            outputSection.classList.add('hidden');
+            loadingDiv.classList.add('hidden');
+            errorDiv.classList.add('hidden');
+        }
+
+        function showResult(text) {
+            hideAllSections();
+            outputDiv.innerText = text; // Use innerText to prevent HTML injection
+            outputSection.classList.remove('hidden');
+        }
+
+        function showError(message) {
+            hideAllSections();
+            errorDiv.textContent = message;
+            errorDiv.classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
