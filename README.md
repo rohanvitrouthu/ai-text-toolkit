@@ -1,4 +1,4 @@
-#AI Text Toolkit
+# AI Text Toolkit
 A simple yet powerful web application that uses the OpenAI API to perform various text transformations. This project serves as a clear, hands-on example of a client-server architecture where a frontend communicates with a secure Python backend to leverage the power of Large Language Models.
 
 ## Features
@@ -27,14 +27,17 @@ Response: The OpenAI API processes the request and sends the transformed text ba
 
 ### Technology Stack
 #### Backend
-Python Flask: A micro web framework for creating the server and API endpoint.
-python-dotenv: For managing environment variables (like the API key).
-openai: The official OpenAI Python client library.
-Flask-Cors: To handle Cross-Origin Resource Sharing, allowing the frontend and backend to communicate.
+- Python Flask: A micro web framework for creating the server and API endpoint.
+
+- python-dotenv: For managing environment variables (like the API key).
+
+- openai: The official OpenAI Python client library.
+
+- Flask-Cors: To handle Cross-Origin Resource Sharing, allowing the frontend and backend to communicate.
 
 #### Frontend:
-HTML5, Tailwind CSS: For modern, utility-first styling.
-JavaScript (ES6+): For handling user interactions and communicating with the backend via the fetch API.
+- HTML5, Tailwind CSS: For modern, utility-first styling.
+- JavaScript (ES6+): For handling user interactions and communicating with the backend via the fetch API.
 
 ## Setup and Installation:
 Follow these steps to get the project running on your local machine.
