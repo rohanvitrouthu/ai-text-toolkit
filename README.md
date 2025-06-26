@@ -28,11 +28,8 @@ Response: The OpenAI API processes the request and sends the transformed text ba
 ### Technology Stack
 #### Backend
 - Python Flask: A micro web framework for creating the server and API endpoint.
-
 - python-dotenv: For managing environment variables (like the API key).
-
 - openai: The official OpenAI Python client library.
-
 - Flask-Cors: To handle Cross-Origin Resource Sharing, allowing the frontend and backend to communicate.
 
 #### Frontend:
