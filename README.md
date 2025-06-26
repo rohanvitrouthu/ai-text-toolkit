@@ -26,11 +26,14 @@ API Communication: Upon receiving a request, the backend server securely uses th
 Response: The OpenAI API processes the request and sends the transformed text back to the Flask server. The server then relays this result back to the frontend, where it is displayed to the user.This separation ensures that the secret API key is never compromised.
 
 ### Technology Stack
-Backend:Python Flask: A micro web framework for creating the server and API endpoint.python-dotenv: For managing environment variables (like the API key).
+#### Backend
+Python Flask: A micro web framework for creating the server and API endpoint.
+python-dotenv: For managing environment variables (like the API key).
 openai: The official OpenAI Python client library.
 Flask-Cors: To handle Cross-Origin Resource Sharing, allowing the frontend and backend to communicate.
 
-Frontend:HTML5, Tailwind CSS: For modern, utility-first styling.
+#### Frontend:
+HTML5, Tailwind CSS: For modern, utility-first styling.
 JavaScript (ES6+): For handling user interactions and communicating with the backend via the fetch API.
 
 ## Setup and Installation:
@@ -60,11 +63,6 @@ pip install -r requirements.txt
 3. Configure API Key: Create a file named .env in the root of the project directory. This file will hold your secret API key. OPENAI_API_KEY="sk-YourSecretKeyGoesHere"
 
 Important: Add .env to your .gitignore file to prevent accidentally committing your secret key to GitHub.
-
-#### .gitignore
-.env
-venv/
-__pycache__/
 
 ## Usage
 To run the application, you need to start the backend server and then open the frontend file.
