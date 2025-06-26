@@ -69,6 +69,7 @@ To run the application, you need to start the backend server and then open the f
 1. Start the Backend Server: With your virtual environment still active, run the Flask application from your terminal:`python app.py`.
 
 The server will start and listen for requests on http://127.0.0.1:5000. You should see a message confirming it's running. Keep this terminal window open.
+
 2. Open the Frontend: Navigate to the project folder on your computer and double-click the index.html file. It will open in your default web browser. You can now use the AI Text Toolkit!
 
 Security Note: NEVER expose your OPENAI_API_KEY in frontend code (JavaScript, HTML). ALWAYS use a .env file and a .gitignore file to keep your API keys and other secrets from being published. 
